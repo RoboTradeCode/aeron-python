@@ -1,5 +1,8 @@
 # aeron-python
 
+![cpython](https://img.shields.io/badge/implementation-cpython-blue)
+![linux](https://img.shields.io/badge/platform-linux-lightgrey)
+
 Неофициальное расширение для Python, позволяющее использовать протокол [Aeron](https://github.com/real-logic/aeron)
 
 # Установка
