@@ -28,3 +28,5 @@ for i in range(10):
     publisher.offer(str(i))
     subscriber.poll()
 ```
+
+Больше примеров вы можете найти в папке [examples](examples)
