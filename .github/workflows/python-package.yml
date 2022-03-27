@@ -26,6 +26,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
+        git submodule update --init --recursive -q
         mkdir -p build/Debug && cd build/Debug
         cmake ../.. && cmake --build . --target 'aeron'
         sudo make install
