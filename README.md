@@ -67,38 +67,64 @@ pip install --upgrade git+https://${PERSONAL_ACCESS_TOKEN}@github.com/RoboTradeC
 
 ## Использование
 
-Расширение предоставляет классы `Subscriber` и `Publisher` для отправки и приёма сообщений соответственно.
+Расширение предоставляет 2 класса для отправки и приёма сообщений — [`Publisher`](aeronmodule.pyi)
+и [`Subscriber`](aeronmodule.pyi) соответственно. Для того чтобы связать их, вам потребуется:
 
-### Subscriber
+1. Канал
+2. Идентификатор потока
 
-```python
-from typing import Callable
+**Канал (Channel)** задаётся строкой, которая
+собирается [по определённым правилам](https://github.com/real-logic/aeron/wiki/Channel-Configuration). В начале строки
+находится медиа-значение — оно определяет протокол, который Aeron будет использовать для отправки
+сообщений ([IPC](https://github.com/real-logic/aeron/wiki/Channel-Configuration#ipc-media---inter-process-communication)
+или [UDP](https://github.com/real-logic/aeron/wiki/Channel-Configuration#udp-media)). После медиа-значения идут
+параметры в формате `ключ=значение`.
 
-class Subscriber:
-    def __init__(self,
-                 handler: Callable[[str], None],
-                 channel: str = 'aeron:udp?control-mode=manual',
-                 stream_id: int = 1001,
-                 fragment_limit: int = 10):
-        ...
+Например, канал для простой однонаправленной передачи данных по UDP будет выглядеть так:
 
-    def add_destination(self, channel: str) -> int:
-        ...
-
-    def remove_destination(self, channel: str) -> int:
-        ...
-
-    def poll(self) -> int:
-        ...
 ```
+aeron:udp?endpoint=localhost:20121
+```
+
+**Идентификатор потока (Stream ID)** задаётся числом (любым, кроме 0). Он нужен, чтобы отличать потоки данных внутри
+одного канала, так как в Aeron по одному и тому же каналу можно передавать несколько независимых потоков данных.
+
+> По умолчанию идентификатор потока равняется `1001`. Такое же значение
+> используют [примеры в репозитории Aeron](https://github.com/real-logic/aeron/tree/master/aeron-samples/src/main/c).
 
 ### Publisher
 
 ```python
-class Publisher:
-    def __init__(self, channel: str = 'aeron:udp?control-mode=manual', stream_id: int = 1001):
-        ...
+from aeron import Publisher
 
-    def offer(self, message: str) -> int:
-        ...
+publisher = Publisher('aeron:udp?endpoint=localhost:20121', 1001)
+publisher.offer('Hello World!')
 ```
+
+Publisher принимает 2 позиционных аргумента — канал и идентификатор потока. Для отправки сообщения используется
+метод `offer`, который единственным позиционным аргументом принимает строку.
+
+### Subscriber
+
+```python
+from aeron import Subscriber
+
+
+def handler(message: str) -> None:
+    pass
+
+
+subscriber = Subscriber(handler, 'aeron:udp?endpoint=localhost:20121', 1001, 10)
+subscriber.poll()
+```
+
+Subscriber принимает 4 позиционных аргумента — функцию обратного вызова, канал, идентификатор потока и максимальное
+количество фрагментов в сообщении.
+
+Под фрагментом сообщения подразумевается фрагмент соответствующего IP-пакета. Сообщение может быть фрагментировано в
+случае, если оно превышает [MTU](https://ru.wikipedia.org/wiki/Maximum_transmission_unit). Aeron автоматически соберёт
+сообщение из фрагментов и только затем передаст в функцию обратного вызова. Но если количество фрагментов превысит
+максимальное значение — сообщение будет полностью отброшено.
+
+> Средний размер MTU в сети Интернет составляет 1400 байт. Следовательно, если максимально количество фрагментов равно
+> 10, вы сможете передать по каналу Aeron сообщение примерно равное 14000 байт
