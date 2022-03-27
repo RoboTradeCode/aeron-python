@@ -128,3 +128,19 @@ Subscriber принимает 4 позиционных аргумента — ф
 
 > Средний размер MTU в сети Интернет составляет 1400 байт. Следовательно, если максимально количество фрагментов равно
 > 10, вы сможете передать по каналу Aeron сообщение примерно равное 14000 байт
+
+### Multicast
+
+```python
+from aeron import Publisher, Subscriber
+
+
+def handler(message: str) -> None:
+    pass
+
+
+publisher = Publisher('aeron:udp?control=localhost:40456|control-mode=dynamic', 1001)
+
+subscriber = Subscriber(handler, 'aeron:udp?control-mode=manual', 1001, 10)
+subscriber.add_destination('aeron:udp?endpoint=localhost:40457|control=localhost:40456')
+```
