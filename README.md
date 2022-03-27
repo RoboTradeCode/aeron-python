@@ -7,18 +7,61 @@
 
 Неофициальное расширение для Python, позволяющее использовать протокол [Aeron](https://github.com/real-logic/aeron)
 
-# Установка
+## Предварительные требования
 
-Репозиторий с исходным кодом является приватным. Поэтому для его клонирования вам может
-потребоваться [персональный токен доступа](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
-Если вы сохраните его в переменной окружения `PERSONAL_ACCESS_TOKEN`, то сможете воспользоваться следующей командой для
-сборки и установки пакета:
+Расширение является лишь обёрткой над клиентской реализацией протокола. В своей работе оно использует динамическую
+библиотеку `libaeron.so`, которую будет искать в директории `/usr/local/lib`. А библиотека в свою очередь ожидает, что
+на машине собран и запущен медиа-драйвер `aeronmd`.
+
+Поэтому перед сборкой расширения, вы должны убедиться, что собрана сама библиотека и медиа-драйвер.
+
+Если это ещё не сделано, то для сборки всего необходимого вы можете клонировать репозиторий и использовать
+утилиту [CMake](https://cmake.org/):
 
 ```shell
-pip install -U git+https://${PERSONAL_ACCESS_TOKEN}@github.com/RoboTradeCode/aeron-python.git
+mkdir -p build/Debug
+cd build/Debug
+cmake ../..
+cmake --build . --target aeron aeronmd
+sudo make install
+cd ../..
 ```
 
-# Использование
+> После сборки медиа-драйвер будет находиться в директории `build/Debug/libs/aeron/binaries`
+
+### Запуск медиа-драйвера
+
+Вы можете просто запустить медиа-драйвер из терминала. Но более удобным способом является запуск в качестве
+модуля [systemd](https://systemd.io/). Его конфигурация может выглядеть так:
+
+```
+[Unit]
+Description=Aeron Media Driver
+After=network.target
+
+[Service]
+User=ubuntu
+ExecStart=/home/ubuntu/aeron-python/build/Debug/libs/aeron/binaries/aeronmd
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
+```
+
+## Установка
+
+Вы можете использовать [pip](https://pypi.org/project/pip/) для сборки и установки пакета:
+
+```shell
+pip install --upgrade git+https://${PERSONAL_ACCESS_TOKEN}@github.com/RoboTradeCode/aeron-python.git
+```
+
+> Репозиторий с исходным кодом является приватным. Для того чтобы клонировать его, в примере выше
+> используется [персональный токен доступа](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token),
+> который сохранён в переменной окружения `PERSONAL_ACCESS_TOKEN`
+
+## Использование
 
 ```python
 from aeron import Subscriber, Publisher
