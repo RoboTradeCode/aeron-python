@@ -13,6 +13,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libs/aeron/aeron-client/src/main
 set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/aeronmodule.c)
 
+install(TARGETS aeron LIBRARY DESTINATION lib)
+
 add_custom_target(build
     COMMAND python3 setup.py build
     COMMAND sudo python3 setup.py install
