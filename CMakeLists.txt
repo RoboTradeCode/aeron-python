@@ -16,9 +16,7 @@ set(SOURCES
 install(TARGETS aeron LIBRARY DESTINATION lib)
 
 add_custom_target(build
-    COMMAND python3 setup.py build
-    COMMAND sudo python3 setup.py install
-    DEPENDS ${SOURCES}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+    COMMAND python3 -m pip install --upgrade git+file://${CMAKE_CURRENT_SOURCE_DIR}
+    DEPENDS ${SOURCES})
 
 add_library(_ EXCLUDE_FROM_ALL ${SOURCES})
