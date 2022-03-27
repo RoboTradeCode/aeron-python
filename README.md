@@ -7,7 +7,9 @@
 
 Неофициальное расширение для Python, позволяющее использовать протокол [Aeron](https://github.com/real-logic/aeron)
 
-## Предварительные требования
+## Установка
+
+### Предварительные требования
 
 Расширение является лишь обёрткой над клиентской реализацией протокола. В своей работе оно использует динамическую
 библиотеку `libaeron.so`, которую будет искать в директории `/usr/local/lib`. А библиотека в свою очередь ожидает, что
@@ -29,7 +31,7 @@ cd ../..
 
 > После сборки медиа-драйвер будет находиться в директории `build/Debug/libs/aeron/binaries`
 
-### Запуск медиа-драйвера
+#### Запуск медиа-драйвера
 
 Вы можете просто запустить медиа-драйвер из терминала. Но более удобным способом является запуск в качестве
 модуля [systemd](https://systemd.io/). Его конфигурация может выглядеть так:
@@ -49,7 +51,7 @@ RestartSec=3
 WantedBy=multi-user.target
 ```
 
-## Установка
+### Сборка пакета
 
 Вы можете использовать [pip](https://pypi.org/project/pip/) для сборки и установки пакета:
 
@@ -63,15 +65,38 @@ pip install --upgrade git+https://${PERSONAL_ACCESS_TOKEN}@github.com/RoboTradeC
 
 ## Использование
 
+Расширение предоставляет классы `Subscriber` и `Publisher` для отправки и приёма сообщений соответственно.
+
+### Subscriber
+
 ```python
-from aeron import Subscriber, Publisher
+from typing import Callable
 
-subscriber = Subscriber(lambda message: print(message), 'aeron:ipc')
-publisher = Publisher('aeron:ipc')
+class Subscriber:
+    def __init__(self,
+                 handler: Callable[[str], None],
+                 channel: str = 'aeron:udp?control-mode=manual',
+                 stream_id: int = 1001,
+                 fragment_limit: int = 10):
+        ...
 
-for i in range(10):
-    publisher.offer(str(i))
-    subscriber.poll()
+    def add_destination(self, channel: str) -> int:
+        ...
+
+    def remove_destination(self, channel: str) -> int:
+        ...
+
+    def poll(self) -> int:
+        ...
 ```
 
-Больше примеров вы можете найти в папке [examples](examples)
+### Publisher
+
+```python
+class Publisher:
+    def __init__(self, channel: str = 'aeron:udp?control-mode=manual', stream_id: int = 1001):
+        ...
+
+    def offer(self, message: str) -> int:
+        ...
+```
