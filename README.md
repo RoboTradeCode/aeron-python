@@ -155,9 +155,9 @@ subscriber.add_destination('aeron:udp?endpoint=localhost:40457|control=localhost
 
 ![Multicast](https://user-images.githubusercontent.com/44947427/160488339-fb5ed869-43de-4aa6-8fa6-325c923b3419.svg)
 
-**3.65.14.242**
-
 ```python
+# 3.65.14.242 (172.31.14.205)
+
 publisher = Publisher('aeron:udp?control=172.31.14.205:40456|control-mode=dynamic')
 
 subscriber = Subscriber(handler, 'aeron:udp?control-mode=manual')
@@ -165,9 +165,9 @@ subscriber.add_destination('aeron:udp?endpoint=172.31.14.205:40457|control=172.3
 subscriber.add_destination('aeron:udp?endpoint=172.31.14.205:40458|control=18.159.92.185:40456')
 ```
 
-**18.159.92.185**
-
 ```python
+# 18.159.92.185 (172.31.4.173)
+
 publisher = Publisher('aeron:udp?control=172.31.4.173:40456|control-mode=dynamic')
 
 subscriber = Subscriber(handler, 'aeron:udp?control-mode=manual')
