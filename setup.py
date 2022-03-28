@@ -13,7 +13,7 @@ with open('README.md', encoding='utf-8') as fh:
 
 setuptools.setup(
     name='aeron',
-    version='0.0.1',
+    version='0.1.0',
     author='nomnoms12',
     author_email='alexander.ign0918@gmail.com',
     description='Efficient reliable UDP unicast, UDP multicast, and IPC message transport',
