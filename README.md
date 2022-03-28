@@ -132,15 +132,43 @@ Subscriber принимает 4 позиционных аргумента — ф
 ### Multicast
 
 ```python
-from aeron import Publisher, Subscriber
-
-
-def handler(message: str) -> None:
-    pass
-
-
 publisher = Publisher('aeron:udp?control=localhost:40456|control-mode=dynamic', 1001)
 
 subscriber = Subscriber(handler, 'aeron:udp?control-mode=manual', 1001, 10)
 subscriber.add_destination('aeron:udp?endpoint=localhost:40457|control=localhost:40456')
+```
+
+Если требуется передавать
+данные [нескольким получателям](https://github.com/real-logic/aeron/wiki/Multiple-Destinations) одновременно, нужно
+указать параметры канала `control` и `control-mode`.
+
+Параметр `control` задаёт адрес, с которого осуществляется рассылка, а параметр `control-mode` задаёт режим управления.
+
+Существует два режима управления: ручной (`manual`) и динамический (`dynamic`). Для Publisher'а расширение предлагает
+использовать только динамический режим, в нём приём новых соединений происходит автоматически. Для Subscriber'а вы
+можете использовать как динамический, так и ручной режим.
+
+Ручной режим для подписчика позволяет программно подписаться на любое количество рассылок. Для этого используется метод
+`add_destination`. Метод принимает один позиционный аргумент — канал, на который требуется подписаться.
+
+#### Более сложный пример
+
+**3.65.14.242**
+
+```python
+publisher = Publisher('aeron:udp?control=172.31.14.205:40456|control-mode=dynamic')
+
+subscriber = Subscriber(handler, 'aeron:udp?control-mode=manual')
+subscriber.add_destination('aeron:udp?endpoint=172.31.14.205:40457|control=172.31.14.205:40456')
+subscriber.add_destination('aeron:udp?endpoint=172.31.14.205:40458|control=18.159.92.185:40456')
+```
+
+**18.159.92.185**
+
+```python
+publisher = Publisher('aeron:udp?control=172.31.4.173:40456|control-mode=dynamic')
+
+subscriber = Subscriber(handler, 'aeron:udp?control-mode=manual')
+subscriber.add_destination('aeron:udp?endpoint=172.31.4.173:40457|control=172.31.4.173:40456')
+subscriber.add_destination('aeron:udp?endpoint=172.31.4.173:40458|control=3.65.14.242:40456')
 ```
