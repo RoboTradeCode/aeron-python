@@ -1,13 +1,12 @@
-from typing import Any, Callable, Optional
+from typing import Callable
 
 class Subscriber:
     def __init__(
         self,
-        handler: Callable[[Optional[Any], str], None],
+        handler: Callable[[str], None],
         channel: str = "aeron:udp?control-mode=manual",
         stream_id: int = 1001,
         fragment_limit: int = 10,
-        clientd: Optional[Any] = None,
     ): ...
     def add_destination(self, channel: str) -> int: ...
     def remove_destination(self, channel: str) -> int: ...
