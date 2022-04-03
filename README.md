@@ -6,56 +6,11 @@
 [![Python](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10-blue)](https://www.python.org/downloads/)
 [![CPython](https://img.shields.io/badge/implementation-cpython-blue)](https://github.com/python/cpython)
 [![Linux](https://img.shields.io/badge/platform-linux-lightgrey)](https://ru.wikipedia.org/wiki/Linux)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 Неофициальное расширение для Python, позволяющее использовать протокол [Aeron](https://github.com/real-logic/aeron)
 
 ## Установка
-
-### Предварительные требования
-
-Расширение является лишь обёрткой над клиентской реализацией протокола. В своей работе оно использует динамическую
-библиотеку `libaeron.so`, которую будет искать в директории `/usr/local/lib`. А библиотека в свою очередь ожидает, что
-на машине собран и запущен медиа-драйвер `aeronmd`.
-
-Поэтому перед сборкой расширения, вы должны убедиться, что собрана сама библиотека и медиа-драйвер.
-
-Если это ещё не сделано, то для сборки всего необходимого вы можете клонировать репозиторий и использовать
-утилиту [CMake](https://cmake.org/):
-
-```shell
-mkdir -p build/Debug
-cd build/Debug
-cmake ../..
-cmake --build . --target aeron aeronmd
-sudo make install
-cd ../..
-```
-
-> После сборки медиа-драйвер будет находиться в директории `build/Debug/libs/aeron/binaries`
-
-#### Запуск медиа-драйвера
-
-Вы можете просто запустить медиа-драйвер из терминала. Но более удобным способом является запуск в качестве
-модуля [systemd](https://systemd.io/). Его конфигурация может выглядеть так:
-
-```
-[Unit]
-Description=Aeron Media Driver
-After=network.target
-
-[Service]
-User=ubuntu
-ExecStart=/home/ubuntu/aeron-python/build/Debug/libs/aeron/binaries/aeronmd
-Restart=always
-RestartSec=3
-
-[Install]
-WantedBy=multi-user.target
-```
-
-### Сборка пакета
-
-Вы можете использовать [pip](https://pypi.org/project/pip/) для сборки и установки пакета:
 
 ```shell
 pip install --upgrade git+https://${PERSONAL_ACCESS_TOKEN}@github.com/RoboTradeCode/aeron-python.git
@@ -67,8 +22,12 @@ pip install --upgrade git+https://${PERSONAL_ACCESS_TOKEN}@github.com/RoboTradeC
 
 ## Использование
 
-Расширение предоставляет 2 класса для отправки и приёма сообщений — [`Publisher`](aeronmodule.pyi)
-и [`Subscriber`](aeronmodule.pyi) соответственно. Для того чтобы связать их, вам потребуется:
+Расширение является клиентской частью протокола Aeron. Это означает, что для его использования Вам также потребуется
+собрать и запустить медиа-драйвер. Если Вы ещё не сделали этого, то подробные инструкции можете найти
+в [разделе сборки](https://github.com/real-logic/aeron#build) официального репозитория.
+
+Расширение предоставляет 2 класса для отправки и приёма сообщений — [`Publisher`](src/aeron/aeronmodule.pyi)
+и [`Subscriber`](src/aeron/aeronmodule.pyi) соответственно. Для того чтобы связать их, вам потребуется:
 
 1. Канал
 2. Идентификатор потока

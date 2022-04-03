@@ -1,22 +1,30 @@
-cmake_minimum_required(VERSION 3.22)
-project(aeron_python C)
+cmake_minimum_required(VERSION 3.21)
+project(aeron-python)
 
-set(CMAKE_C_STANDARD 17)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_INSTALL_PREFIX .)
 
-# Python 3.8
 include_directories(/usr/include/python3.8)
 
-# Aeron Client
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/aeron EXCLUDE_FROM_ALL)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libs/aeron/aeron-client/src/main/c)
+include(FetchContent)
+FetchContent_Declare(aeron GIT_REPOSITORY https://github.com/real-logic/aeron GIT_TAG 1.37.0)
+FetchContent_Populate(aeron)
+add_subdirectory(${aeron_SOURCE_DIR} EXCLUDE_FROM_ALL)
+include_directories(${aeron_SOURCE_DIR}/aeron-client/src/main/c)
 
-set(SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/aeronmodule.c)
+set(SOURCE
+    src/aeron/aeronmodule.c
+    src/aeron/__init__.pyi
+    pyproject.toml
+    setup.py
+    setup.cfg
+    MANIFEST.in
+    README.md)
 
-install(TARGETS aeron LIBRARY DESTINATION lib)
+add_library(_ EXCLUDE_FROM_ALL ${SOURCE})
 
-add_custom_target(build
-    COMMAND python3 -m pip install --upgrade git+file://${CMAKE_CURRENT_SOURCE_DIR}
-    DEPENDS ${SOURCES})
+add_custom_target(aeron-python ALL)
+add_dependencies(aeron-python aeron_static)
 
-add_library(_ EXCLUDE_FROM_ALL ${SOURCES})
+install(TARGETS aeron_static LIBRARY DESTINATION lib)
+install(DIRECTORY ${aeron_SOURCE_DIR}/aeron-client/src/main/c DESTINATION include/aeron FILES_MATCHING PATTERN "*.h")
