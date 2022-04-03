@@ -1,6 +1,6 @@
 import subprocess
 from pathlib import Path
-from setuptools import Command, Extension, setup, find_packages
+from setuptools import Command, Extension, setup
 from setuptools.command.build_ext import build_ext
 
 
