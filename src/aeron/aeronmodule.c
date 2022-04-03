@@ -14,6 +14,7 @@ typedef struct
     aeron_subscription_t* subscription;
     aeron_fragment_assembler_t* fragment_assembler;
     int fragment_limit;
+    PyObject* clientd;
 } SubscriberObject;
 
 static void Subscriber_dealloc(SubscriberObject* self)
@@ -36,7 +37,7 @@ void poll_handler(void* clientd, const uint8_t* buffer, size_t Py_UNUSED(length)
 {
     SubscriberObject* subscriber = (SubscriberObject*)clientd;
 
-    PyObject* arglist = Py_BuildValue("(s)", buffer);
+    PyObject* arglist = Py_BuildValue("(Os)", subscriber->clientd, buffer);
     PyObject* result = PyObject_CallObject(subscriber->handler, arglist);
 
     Py_DECREF(arglist);
@@ -49,8 +50,9 @@ static int Subscriber_init(SubscriberObject* self, PyObject* args, PyObject* Py_
     const char* channel = "aeron:udp?control-mode=manual";
     int stream_id = 1001;
     int fragment_limit = 10;
+    PyObject* clientd = Py_None;
 
-    if (PyArg_ParseTuple(args, "O|sii", &handler, &channel, &stream_id, &fragment_limit))
+    if (PyArg_ParseTuple(args, "O|siiO", &handler, &channel, &stream_id, &fragment_limit, &clientd))
     {
         if (!PyCallable_Check(handler))
         {
@@ -66,6 +68,8 @@ static int Subscriber_init(SubscriberObject* self, PyObject* args, PyObject* Py_
     }
 
     self->fragment_limit = fragment_limit;
+    Py_XINCREF(clientd);
+    self->clientd = clientd;
 
     if (aeron_context_init(&self->context) < 0)
         printf("aeron_context_init: %s\n", aeron_errmsg());
