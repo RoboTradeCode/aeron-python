@@ -19,20 +19,14 @@ jobs:
         python-version: ["3.8", "3.9", "3.10"]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
+      run: |
+        sudo add-apt-repository ppa:deadsnakes/ppa
+        sudo apt install python${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        git submodule update --init --recursive -q
-        mkdir -p build/Debug
-        cd build/Debug
-        cmake ../..
-        cmake --build . --target 'aeron'
-        sudo make install
-        python -m pip install --upgrade pip setuptools wheel
+        python${{ matrix.python-version }} -m pip install --upgrade pip setuptools wheel
     - name: Build package
       run: |
         python -m pip install --upgrade git+file://${GITHUB_WORKSPACE}
