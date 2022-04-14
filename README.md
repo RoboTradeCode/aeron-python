@@ -12,6 +12,17 @@
 
 ## Установка
 
+### Предварительные требования
+
+Для сборки библиотеки вам нужен CMake и JDK. Вы можете установить их, выполнив следующие команды:
+
+```shell
+sudo apt install snapd default-jdk -y
+sudo snap install cmake --classic
+```
+
+### Сборка
+
 ```shell
 pip install --upgrade git+https://${PERSONAL_ACCESS_TOKEN}@github.com/RoboTradeCode/aeron-python.git
 ```
