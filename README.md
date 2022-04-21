@@ -84,7 +84,7 @@ def handler(message: str) -> None:
     pass
 
 
-subscriber = Subscriber(handler=handler,
+subscriber = Subscriber(handler,
                         channel='aeron:udp?endpoint=localhost:20121',
                         stream_id=1001,
                         fragment_limit=10)
