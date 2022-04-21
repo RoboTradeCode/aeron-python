@@ -67,7 +67,7 @@ aeron:udp?endpoint=localhost:20121
 ```python
 from aeron import Publisher
 
-publisher = Publisher('aeron:udp?endpoint=localhost:20121', 1001)
+publisher = Publisher(channel='aeron:udp?endpoint=localhost:20121', stream_id=1001)
 publisher.offer('Hello World!')
 ```
 
@@ -84,7 +84,10 @@ def handler(message: str) -> None:
     pass
 
 
-subscriber = Subscriber(handler, 'aeron:udp?endpoint=localhost:20121', 1001, 10)
+subscriber = Subscriber(handler=handler,
+                        channel='aeron:udp?endpoint=localhost:20121',
+                        stream_id=1001,
+                        fragment_limit=10)
 subscriber.poll()
 ```
 
