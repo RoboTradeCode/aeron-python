@@ -67,7 +67,7 @@ aeron:udp?endpoint=localhost:20121
 ```python
 from aeron import Publisher
 
-publisher = Publisher(channel='aeron:udp?endpoint=localhost:20121', stream_id=1001)
+publisher = Publisher('aeron:udp?endpoint=localhost:20121', 1001)
 publisher.offer('Hello World!')
 ```
 
