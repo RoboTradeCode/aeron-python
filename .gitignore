@@ -1,2 +1,5 @@
 dist/
+build/
 *.egg-info/
+# TODO: remove
+venv/

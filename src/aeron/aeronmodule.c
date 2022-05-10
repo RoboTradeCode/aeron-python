@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 #include <Python.h>
-#include <aeronc.h>
+#include <aeron/aeronc.h>
 
 typedef struct
 {
@@ -43,14 +43,16 @@ void poll_handler(void* clientd, const uint8_t* buffer, size_t Py_UNUSED(length)
     Py_DECREF(result);
 }
 
-static int Subscriber_init(SubscriberObject* self, PyObject* args, PyObject* Py_UNUSED(kwds))
+static int Subscriber_init(SubscriberObject* self, PyObject* args, PyObject* keywds)
 {
     PyObject* handler;
     const char* channel = "aeron:udp?control-mode=manual";
     int stream_id = 1001;
     int fragment_limit = 10;
 
-    if (PyArg_ParseTuple(args, "O|sii", &handler, &channel, &stream_id, &fragment_limit))
+    static char* kwlist[] = { "handler", "channel", "stream_id", "fragment_limit", NULL };
+
+    if (PyArg_ParseTupleAndKeywords(args, keywds, "O|sii", kwlist, &handler, &channel, &stream_id, &fragment_limit))
     {
         if (!PyCallable_Check(handler))
         {
