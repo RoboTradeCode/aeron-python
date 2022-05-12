@@ -163,7 +163,7 @@ BasicSubscriber_close(BasicSubscriberObject *self, PyObject *Py_UNUSED(ignored))
 }
 
 static PyMethodDef BasicSubscriber_methods[] = {
-    {"poll", (PyCFunction) BasicSubscriber_poll, METH_NOARGS,
+    {"poll",  (PyCFunction) BasicSubscriber_poll,  METH_NOARGS,
         "Poll the images under the subscription for available message fragments"
     },
     {"close", (PyCFunction) BasicSubscriber_close, METH_NOARGS,

@@ -25,8 +25,7 @@ PyInit_aeron(void)
         return NULL;
     }
 
-    if (exceptions_init(m) < 0)
-    {
+    if (exceptions_init(m) < 0) {
         Py_DECREF(m);
         return NULL;
     }
