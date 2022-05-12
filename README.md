@@ -8,34 +8,59 @@
 [![Linux](https://img.shields.io/badge/platform-linux-lightgrey)](https://ru.wikipedia.org/wiki/Linux)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-Неофициальное расширение для Python, позволяющее использовать протокол [Aeron](https://github.com/real-logic/aeron)
+Неофициальное расширение для Python, позволяющее использовать протокол [Aeron](https://github.com/real-logic/aeron).
 
 ## Установка
 
 ### Предварительные требования
 
-Для сборки библиотеки вам нужен CMake и JDK. Вы можете установить их, выполнив следующие команды:
+Перед установкой и использованием данного расширения, у вас должен быть установлен сам Aeron. Если это не так, то
+установите его, воспользовавшись [официальным руководством](https://github.com/real-logic/aeron#c-build):
+
+1. Установите зависимости сборки:
 
 ```shell
-sudo apt install snapd default-jdk -y
-sudo snap install cmake --classic
+sudo apt update
+sudo apt install --assume-yes git cmake g++ default-jdk libbsd-dev uuid-dev
+git clone --branch 1.38.2 --depth 1 https://github.com/real-logic/aeron.git
 ```
 
-### Сборка
+2. Соберите и протестируйте код:
 
 ```shell
-pip install --upgrade git+https://${PERSONAL_ACCESS_TOKEN}@github.com/RoboTradeCode/aeron-python.git
+cd aeron
+mkdir --parents cppbuild/Debug
+cd cppbuild/Debug
+cmake -DCMAKE_BUILD_TYPE=Debug ../..
+cmake --build . --clean-first
+ctest
 ```
 
-> Репозиторий с исходным кодом является приватным. Для того чтобы клонировать его, в примере выше
-> используется [персональный токен доступа](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token),
-> который сохранён в переменной окружения `PERSONAL_ACCESS_TOKEN`
+> Вы можете ускорить сборку, указав команде `cmake --build` максимальное количество параллельных процессов. За это
+> отвечает параметр [`--parallel`](https://cmake.org/cmake/help/latest/manual/cmake.1.html#build-a-project)
+
+3. Установите библиотеку в систему
+
+```shell
+sudo cmake --install .
+```
+
+> По умолчанию CMake установит библиотеку в `/usr/local`. Вы можете изменить директорию установки с помощью
+> параметра [`--prefix`](https://cmake.org/cmake/help/latest/variable/CMAKE_INSTALL_PREFIX.html#variable:CMAKE_INSTALL_PREFIX)
+
+### Сборка и установка расширения
+
+```shell
+pip install --upgrade "aeron @ git+ssh://git@github.com/RoboTradeCode/aeron-python.git@v0.2.0"
+```
+
+> В примере выше используется подключение с помощью SSH. Подробнее о нём вы можете прочитать в
+> руководстве ["Connecting to GitHub with SSH"](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
 
 ## Использование
 
-Расширение является клиентской частью протокола Aeron. Это означает, что для его использования Вам также потребуется
-собрать и запустить медиа-драйвер. Если Вы ещё не сделали этого, то подробные инструкции можете найти
-в [разделе сборки](https://github.com/real-logic/aeron#build) официального репозитория.
+Расширение является клиентской частью протокола Aeron. Это означает, что для его использования вам также потребуется
+запустить медиа-драйвер.
 
 Расширение предоставляет 2 класса для отправки и приёма сообщений — [`Publisher`](src/aeron/aeronmodule.pyi)
 и [`Subscriber`](src/aeron/aeronmodule.pyi) соответственно. Для того чтобы связать их, вам потребуется:
