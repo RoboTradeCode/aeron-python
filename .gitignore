@@ -1,2 +1,6 @@
-dist/
+# C extensions
+*.so
+
+# Distribution / packaging
+build/
 *.egg-info/
