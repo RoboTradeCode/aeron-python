@@ -51,7 +51,7 @@ sudo cmake --install .
 ### Сборка и установка расширения
 
 ```shell
-pip install --upgrade "aeron @ git+ssh://git@github.com/RoboTradeCode/aeron-python.git@v0.2.0"
+pip install --upgrade "aeron @ git+ssh://git@github.com/RoboTradeCode/aeron-python.git"
 ```
 
 > В примере выше используется подключение с помощью SSH. Подробнее о нём вы можете прочитать в
