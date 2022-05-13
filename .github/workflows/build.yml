@@ -31,7 +31,7 @@ jobs:
           cd aeron/cppbuild/Debug
           cmake -DCMAKE_BUILD_TYPE=Debug ../..
           cmake --build . --clean-first
-          cmake --install .
+          sudo cmake --install .
       - name: Upgrade pip
         run: |
           pip install --upgrade pip
