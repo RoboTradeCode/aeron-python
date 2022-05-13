@@ -1,6 +1,6 @@
 from typing import Callable
 
-class BasicPublisher:
+class Publisher:
     def __init__(
         self,
         channel: str = "aeron:udp?endpoint=localhost:20121",
@@ -9,7 +9,7 @@ class BasicPublisher:
     def offer(self, message: str) -> int: ...
     def close(self) -> None: ...
 
-class BasicSubscriber:
+class Subscriber:
     def __init__(
         self,
         handler: Callable[[str], None],

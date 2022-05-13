@@ -1,5 +1,4 @@
-dist/
+# Distribution / packaging
 build/
+dist/
 *.egg-info/
-# TODO: remove
-venv/
