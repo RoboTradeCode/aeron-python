@@ -18,7 +18,6 @@ class SleepingIdleStrategy(IdleStrategy):
 
 
 class YieldingIdleStrategy(IdleStrategy):
-    # noinspection PyMethodMayBeStatic
     def idle(self, work_count: int = None) -> None:
         if work_count is None or work_count == 0:
             sleep(0)
