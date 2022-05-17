@@ -1,5 +1,6 @@
+import asyncio
+import time
 from abc import ABC, abstractmethod
-from time import sleep
 
 
 class IdleStrategy(ABC):
@@ -14,15 +15,41 @@ class SleepingIdleStrategy(IdleStrategy):
 
     def idle(self, work_count: int = None) -> None:
         if work_count is None or work_count == 0:
-            sleep(self._m_duration)
+            time.sleep(self._m_duration)
 
 
 class YieldingIdleStrategy(IdleStrategy):
     def idle(self, work_count: int = None) -> None:
         if work_count is None or work_count == 0:
-            sleep(0)
+            time.sleep(0)
 
 
 class NoOpIdleStrategy(IdleStrategy):
     def idle(self, work_count: int = None) -> None:
+        pass
+
+
+class AsyncIdleStrategy(ABC):
+    @abstractmethod
+    async def idle(self, work_count: int = None) -> None:
+        ...
+
+
+class AsyncSleepingIdleStrategy(AsyncIdleStrategy):
+    def __init__(self, duration: int):
+        self._m_duration = duration
+
+    async def idle(self, work_count: int = None) -> None:
+        if work_count is None or work_count == 0:
+            await asyncio.sleep(self._m_duration)
+
+
+class AsyncYieldingIdleStrategy(AsyncIdleStrategy):
+    async def idle(self, work_count: int = None) -> None:
+        if work_count is None or work_count == 0:
+            await asyncio.sleep(0)
+
+
+class AsyncNoOpIdleStrategy(AsyncIdleStrategy):
+    async def idle(self, work_count: int = None) -> None:
         pass
