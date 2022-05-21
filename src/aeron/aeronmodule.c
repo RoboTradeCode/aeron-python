@@ -90,22 +90,39 @@ Publisher_offer(PublisherObject *self, PyObject *args, PyObject *kwds)
     );
 
     if (AERON_PUBLICATION_NOT_CONNECTED == result) {
-        PyErr_SetString(AeronPublicationNotConnectedError, aeron_errmsg());
+        PyErr_SetString(
+            AeronPublicationNotConnectedError,
+            "Offer failed because publisher is not connected to a subscriber"
+        );
         return NULL;
     } else if (AERON_PUBLICATION_BACK_PRESSURED == result) {
-        PyErr_SetString(AeronPublicationBackPressuredError, aeron_errmsg());
+        PyErr_SetString(
+            AeronPublicationBackPressuredError,
+            "Offer failed due to back pressure"
+        );
         return NULL;
     } else if (AERON_PUBLICATION_ADMIN_ACTION == result) {
-        PyErr_SetString(AeronPublicationAdminActionError, aeron_errmsg());
+        PyErr_SetString(
+            AeronPublicationAdminActionError,
+            "Offer failed because of an administration action in the system"
+        );
         return NULL;
     } else if (AERON_PUBLICATION_CLOSED == result) {
-        PyErr_SetString(AeronPublicationClosedError, aeron_errmsg());
+        PyErr_SetString(
+            AeronPublicationClosedError,
+            "Offer failed because publication is closed"
+        );
         return NULL;
     } else if (AERON_PUBLICATION_MAX_POSITION_EXCEEDED == result) {
-        PyErr_SetString(AeronPublicationMaxPositionExceededError, aeron_errmsg());
+        PyErr_SetString(
+            AeronPublicationMaxPositionExceededError,
+            "Offer failed due to reaching the maximum position"
+        );
         return NULL;
     } else if (AERON_PUBLICATION_ERROR == result) {
-        PyErr_SetString(AeronPublicationError, aeron_errmsg());
+        char error_string[256];
+        snprintf(error_string, 256, "Offer failed due to unknown reason %ld", result);
+        PyErr_SetString(AeronPublicationError, error_string);
         return NULL;
     }
 
