@@ -15,7 +15,7 @@ class SleepingIdleStrategy(IdleStrategy):
 
     def idle(self, work_count: int = None) -> None:
         if work_count is None or work_count == 0:
-            time.sleep(self._m_duration)
+            time.sleep(self._m_duration / 1000)
 
 
 class YieldingIdleStrategy(IdleStrategy):
@@ -41,7 +41,7 @@ class AsyncSleepingIdleStrategy(AsyncIdleStrategy):
 
     async def idle(self, work_count: int = None) -> None:
         if work_count is None or work_count == 0:
-            await asyncio.sleep(self._m_duration)
+            await asyncio.sleep(self._m_duration / 1000)
 
 
 class AsyncYieldingIdleStrategy(AsyncIdleStrategy):
