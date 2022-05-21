@@ -245,7 +245,7 @@ Subscriber_init(SubscriberObject *self, PyObject *args, PyObject *kwds)
         return -1;
     }
 
-    if (aeron_async_add_subscription(
+    int result = aeron_async_add_subscription(
         &self->async,
         self->aeron,
         channel,
@@ -254,7 +254,9 @@ Subscriber_init(SubscriberObject *self, PyObject *args, PyObject *kwds)
         NULL,
         NULL,
         NULL
-    ) < 0) {
+    );
+
+    if (result < 0) {
         PyErr_SetString(AeronError, aeron_errmsg());
         return -1;
     }
@@ -289,12 +291,14 @@ Subscriber_add_destination(SubscriberObject *self, PyObject *args, PyObject *kwd
         return NULL;
     }
 
-    if (aeron_subscription_async_add_destination(
+    int result = aeron_subscription_async_add_destination(
         &self->async,
         self->aeron,
         self->subscription,
         channel
-    ) < 0) {
+    );
+
+    if (result < 0) {
         PyErr_SetString(AeronError, aeron_errmsg());
         return NULL;
     }
@@ -312,12 +316,14 @@ Subscriber_remove_destination(SubscriberObject *self, PyObject *args, PyObject *
         return NULL;
     }
 
-    if (aeron_subscription_async_remove_destination(
+    int result = aeron_subscription_async_remove_destination(
         &self->async,
         self->aeron,
         self->subscription,
         channel
-    ) < 0) {
+    );
+
+    if (result < 0) {
         PyErr_SetString(AeronError, aeron_errmsg());
         return NULL;
     }
