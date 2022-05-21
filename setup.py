@@ -1,8 +1,8 @@
 from setuptools import Extension, setup
 
 aeron = Extension(
-    name="aeron",
-    sources=["src/aeron/aeronmodule.c"],
+    name="aeron.aeron",
+    sources=["src/aeron/aeron/aeronmodule.c"],
     libraries=["aeron"],
 )
 
