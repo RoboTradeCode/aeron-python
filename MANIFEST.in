@@ -1,1 +1,1 @@
-include src/aeron/__init__.pyi
+include src/aeron/aeron/__init__.pyi
