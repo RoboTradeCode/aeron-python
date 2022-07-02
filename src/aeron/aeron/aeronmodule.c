@@ -1,6 +1,7 @@
 #define PY_SSIZE_T_CLEAN
 
 #include <Python.h>
+#include <stdbool.h>
 #include <aeron/aeronc.h>
 
 #define DEFAULT_CHANNEL "aeron:udp?endpoint=localhost:20121"
