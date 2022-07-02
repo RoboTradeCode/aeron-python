@@ -5,7 +5,7 @@
 
 #define DEFAULT_CHANNEL "aeron:udp?endpoint=localhost:20121"
 #define DEFAULT_STREAM_ID (1001)
-#define DEFAULT_FRAGMENT_COUNT_LIMIT (10)
+#define DEFAULT_FRAGMENT_COUNT_LIMIT (1)
 
 static PyObject *AeronError;
 static PyObject *AeronPublicationError;
@@ -190,6 +190,8 @@ Subscriber_dealloc(SubscriberObject *self)
     Py_TYPE(self)->tp_free((PyObject *) self);
 }
 
+bool HandlerErr_Occurred = false;
+
 void
 poll_handler(void *clientd, const uint8_t *buffer, size_t length, aeron_header_t *Py_UNUSED(header))
 {
@@ -203,6 +205,7 @@ poll_handler(void *clientd, const uint8_t *buffer, size_t length, aeron_header_t
     PyObject *result = PyObject_CallObject(subscriber->handler, arglist);
     Py_DECREF(arglist);
     if (result == NULL) {
+        HandlerErr_Occurred = true;
         return;
     }
 
@@ -343,6 +346,11 @@ Subscriber_poll(SubscriberObject *self, PyObject *Py_UNUSED(args))
 
     if (fragments_read < 0) {
         PyErr_SetString(AeronError, aeron_errmsg());
+        return NULL;
+    }
+
+    if (HandlerErr_Occurred) {
+        HandlerErr_Occurred = false;
         return NULL;
     }
 
